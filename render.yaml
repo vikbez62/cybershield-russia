@@ -1,10 +1,15 @@
-services:  -type: web
+services:
+
+    type: web
     name: cybershield-russia
     env: node
     region: frankfurt
     plan: free
     rootDir: .
-    buildCommand: npm install && npm --prefix api install && npm run build:css
+    buildCommand: |
+    npm install
+    npm --prefix api install
+    npm run build:css
     startCommand: node api/server.js
     autoDeploy: true
     envVars:
