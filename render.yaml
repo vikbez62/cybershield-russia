@@ -1,6 +1,6 @@
 services:
 
-    -type: web
+    type: web
     name: cybershield-russia
     env: node
     region: frankfurt
