@@ -1,6 +1,5 @@
 services:
-
-    type: web
+  - type: web
     name: cybershield-russia
     env: node
     region: frankfurt
@@ -10,26 +9,26 @@ services:
     startCommand: node api/server.js
     autoDeploy: true
     envVars:
-        key: NODE_VERSION
+      - key: NODE_VERSION
         value: "20"
-        key: NPM_CONFIG_PRODUCTION
+      - key: NPM_CONFIG_PRODUCTION
         value: "false"
-        key: ALLOWED_ORIGINS
+      - key: ALLOWED_ORIGINS
         value: "https://cybershield-russia.onrender.com"
-        key: NEWS_API_KEY
+      - key: NEWS_API_KEY
         sync: false
-        key: GNEWS_API_KEY
+      - key: GNEWS_API_KEY
         sync: false
-        key: OPENWEATHER_API_KEY
+      - key: OPENWEATHER_API_KEY
         sync: false
-        key: OPENROUTER_API_KEY
+      - key: OPENROUTER_API_KEY
         sync: false
-        key: ADMIN_REPORTS_KEY
+      - key: ADMIN_REPORTS_KEY
         sync: false
-        key: CAPTCHA_PROVIDER
+      - key: CAPTCHA_PROVIDER
         sync: false
-        key: CAPTCHA_SITE_KEY
+      - key: CAPTCHA_SITE_KEY
         sync: false
-        key: CAPTCHA_SECRET
+      - key: CAPTCHA_SECRET
         sync: false
-        healthCheckPath: /health
+    healthCheckPath: /health
