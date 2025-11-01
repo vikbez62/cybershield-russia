@@ -69,25 +69,58 @@ const News = (() => {
     if (!box) return;
     box.innerHTML = '';
     if (!list || list.length === 0) {
-      box.innerHTML = '<div class="text-secondary text-sm">Пока нет новостей. Попробуйте позже.</div>';
+      const emptyMsg = document.createElement('div');
+      emptyMsg.className = 'text-secondary text-sm';
+      emptyMsg.textContent = 'Пока нет новостей. Попробуйте позже.';
+      box.appendChild(emptyMsg);
       return;
     }
     for (const a of list) {
-      const imgSrc = a.imageUrl || PLACEHOLDER;
+      const imgSrc = (a.imageUrl || PLACEHOLDER).replace(/"/g, '&quot;');
       const dmn = getDomain(a.url || '') || '';
       const item = document.createElement('article');
       item.className = 'card';
-      item.innerHTML = `
-        <img class="card-img" src="${imgSrc}" alt="" loading="lazy"
-             onerror="this.onerror=null; this.src='${PLACEHOLDER}';">
-        <div class="card-body">
-          <a href="${a.url}" target="_blank" rel="noopener" class="card-title hover:underline">${a.title}</a>
-          <div class="card-desc text-secondary mt-1">${(a.description || '').slice(0, 180)}...</div>
-          <div class="card-meta">
-            ${a.source || ''} ${dmn ? '• <span class="tag tag-domain">'+dmn+'</span>' : ''} • ${safeFormatDate(a.publishedAt || new Date().toISOString())}
-          </div>
-        </div>
-      `;
+      
+      const img = document.createElement('img');
+      img.className = 'card-img';
+      img.src = imgSrc;
+      img.alt = '';
+      img.loading = 'lazy';
+      img.onerror = function() { this.onerror = null; this.src = PLACEHOLDER; };
+      
+      const cardBody = document.createElement('div');
+      cardBody.className = 'card-body';
+      
+      const link = document.createElement('a');
+      link.href = (a.url || '#').replace(/"/g, '&quot;');
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.className = 'card-title hover:underline';
+      link.textContent = a.title || 'Без названия';
+      
+      const desc = document.createElement('div');
+      desc.className = 'card-desc text-secondary mt-1';
+      desc.textContent = (a.description || '').slice(0, 180) + '...';
+      
+      const meta = document.createElement('div');
+      meta.className = 'card-meta';
+      const metaText = document.createTextNode((a.source || '') + (dmn ? ' • ' : ''));
+      meta.appendChild(metaText);
+      if (dmn) {
+        const domainSpan = document.createElement('span');
+        domainSpan.className = 'tag tag-domain';
+        domainSpan.textContent = dmn;
+        meta.appendChild(domainSpan);
+        meta.appendChild(document.createTextNode(' • '));
+      }
+      meta.appendChild(document.createTextNode(safeFormatDate(a.publishedAt || new Date().toISOString())));
+      
+      cardBody.appendChild(link);
+      cardBody.appendChild(desc);
+      cardBody.appendChild(meta);
+      
+      item.appendChild(img);
+      item.appendChild(cardBody);
       box.appendChild(item);
     }
   }

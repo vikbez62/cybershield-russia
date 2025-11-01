@@ -2,8 +2,8 @@ module.exports = {
 darkMode: 'class',
 content: [
 './index.html',
-'.//*.html',
-'./js//*.{js,ts,jsx,tsx}'
+'./**/*.html',
+'./js/**/*.{js,ts,jsx,tsx}'
 ],
 safelist: [
 "hidden","flex","inline-flex","md:flex","grid","items-center","justify-between",

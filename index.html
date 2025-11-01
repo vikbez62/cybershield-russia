@@ -2,9 +2,14 @@
 <html lang="ru" class="dark">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, viewport-fit=cover">
   <title>CyberShield Russia — КиберЩит</title>
   <meta name="description" content="Портал кибербезопасности: новости, погода, советы защиты от мошенников, AI‑ассистент и репорты о мошенничестве.">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="КиберЩит">
   <link rel="canonical" href="https://cybershield-russia.onrender.com/">
   <meta name="theme-color" content="#0F172A">
   <meta name="color-scheme" content="dark light">
@@ -45,28 +50,40 @@
 <body class="font-sans selection:bg-accent/30">
   <!-- Header -->
   <header class="sticky top-0 z-40 backdrop-blur border-b cs-header">
-    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
-      <a href="/" class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center text-accent font-bold">CS</div>
-        <div>
-          <div class="text-lg md:text-xl font-display tracking-wide">CyberShield Russia</div>
-          <div class="text-xs text-muted">Портал кибербезопасности</div>
+    <div class="max-w-7xl mx-auto px-4 py-4">
+      <div class="flex items-center justify-between">
+        <a href="/" class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center text-accent font-bold">CS</div>
+          <div>
+            <div class="text-lg md:text-xl font-display tracking-wide">CyberShield Russia</div>
+            <div class="text-xs text-muted">Портал кибербезопасности</div>
+          </div>
+        </a>
+        <nav class="hidden md:flex items-center gap-6 text-sm">
+          <a class="nav-link" href="#news-section" data-i18n="nav_news">Новости</a>
+          <a class="nav-link" href="#learn-section" data-i18n="nav_learn">Обучение</a>
+          <a class="nav-link" href="#tools-section" data-i18n="nav_tools">Инструменты</a>
+          <a class="nav-link" href="#about-section" data-i18n="nav_about">О нас</a>
+        </nav>
+        <div class="flex items-center gap-2">
+          <button id="mobileMenuToggle" class="md:hidden glass px-3 py-2 rounded-lg text-sm" aria-label="Меню" aria-expanded="false">☰</button>
+          <div class="relative lang-selector">
+            <select id="langSelect" class="glass px-3 py-2 pr-8 text-sm rounded-lg appearance-none cursor-pointer" title="Язык" aria-label="Выбрать язык">
+              <option value="ru" data-flag="🇷🇺">RU</option>
+              <option value="en" data-flag="🇬🇧">EN</option>
+              <option value="zh" data-flag="🇨🇳">中文</option>
+            </select>
+            <span id="langFlag">🇷🇺</span>
+          </div>
+          <button id="themeToggle" class="glass px-3 py-2 rounded-lg text-sm" title="Тема" aria-label="Переключить тему">🌓</button>
         </div>
-      </a>
-      <nav class="hidden md:flex items-center gap-6 text-sm">
+      </div>
+      <nav id="mobileMenu" class="md:hidden">
         <a class="nav-link" href="#news-section" data-i18n="nav_news">Новости</a>
         <a class="nav-link" href="#learn-section" data-i18n="nav_learn">Обучение</a>
         <a class="nav-link" href="#tools-section" data-i18n="nav_tools">Инструменты</a>
         <a class="nav-link" href="#about-section" data-i18n="nav_about">О нас</a>
       </nav>
-      <div class="flex items-center gap-3">
-        <select id="langSelect" class="glass px-3 py-2 text-sm rounded-lg" title="Язык">
-          <option value="ru">RU</option>
-          <option value="en">EN</option>
-          <option value="zh">中文</option>
-        </select>
-        <button id="themeToggle" class="glass px-3 py-2 rounded-lg text-sm" title="Тема" aria-label="Переключить тему">🌓</button>
-      </div>
     </div>
   </header>
 

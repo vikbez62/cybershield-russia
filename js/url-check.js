@@ -79,23 +79,43 @@
     };
   }
 
+  function escapeHtml(text) {
+    if (typeof text !== 'string') text = String(text);
+    var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+  }
+
   function render(res){
     var box = $('url-result');
     if (!box) return;
     box.innerHTML = '';
 
     if (!res || !res.ok){
-      box.innerHTML = '<div class="text-secondary">'+(res && res.msg ? res.msg : 'Ошибка анализа')+'</div>';
+      var errDiv = document.createElement('div');
+      errDiv.className = 'text-secondary';
+      errDiv.textContent = (res && res.msg ? res.msg : 'Ошибка анализа');
+      box.appendChild(errDiv);
       return;
     }
 
-    var riskLabel = res.risk >= 2 ? '<span class="tag tag-bad">Высокий риск</span>' :
-                     res.risk === 1 ? '<span class="tag tag-warn">Есть риски</span>' :
-                     '<span class="tag tag-ok">Низкий риск</span>';
-
     var top = document.createElement('div');
     top.className = 'mb-2';
-    top.innerHTML = 'Домен: <span class="tag tag-domain">'+res.domain+'</span> · '+riskLabel;
+    
+    var domainText = document.createTextNode('Домен: ');
+    top.appendChild(domainText);
+    
+    var domainSpan = document.createElement('span');
+    domainSpan.className = 'tag tag-domain';
+    domainSpan.textContent = res.domain || '';
+    top.appendChild(domainSpan);
+    
+    top.appendChild(document.createTextNode(' · '));
+    
+    var riskSpan = document.createElement('span');
+    riskSpan.className = res.risk >= 2 ? 'tag tag-bad' : res.risk === 1 ? 'tag tag-warn' : 'tag tag-ok';
+    riskSpan.textContent = res.risk >= 2 ? 'Высокий риск' : res.risk === 1 ? 'Есть риски' : 'Низкий риск';
+    top.appendChild(riskSpan);
+    
     box.appendChild(top);
 
     var ul = document.createElement('ul');
@@ -103,7 +123,10 @@
     res.items.forEach(function(it){
       var li = document.createElement('li');
       var cls = it.type === 'bad' ? 'tag tag-bad' : it.type === 'warn' ? 'tag tag-warn' : 'tag tag-ok';
-      li.innerHTML = '<span class="'+cls+'">'+it.text+'</span>';
+      var tagSpan = document.createElement('span');
+      tagSpan.className = cls;
+      tagSpan.textContent = it.text || '';
+      li.appendChild(tagSpan);
       ul.appendChild(li);
     });
     box.appendChild(ul);

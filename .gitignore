@@ -9,3 +9,12 @@ api/.env
 .DS_Store
 
 Thumbs.db
+
+# Кэш файлы
+api/cache/*.json
+api/data/*.json
+api/data/*.ndjson
+
+# Но не игнорируем папки
+!api/cache/.gitkeep
+!api/data/.gitkeep

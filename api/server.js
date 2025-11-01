@@ -1,5 +1,6 @@
 /* Backend сервер: API-прокси + сжатие + долгий кэш для статики + SPA fallback */
 const path = require('path');
+const fs = require('fs');
 const express = require('express');
 const dotenv = require('dotenv');
 const helmet = require('helmet');
@@ -19,12 +20,42 @@ app.disable('x-powered-by');
 app.set('etag', 'weak'); // ETag по умолчанию (можно 'strong' по желанию)
 
 app.use(helmet({
-  contentSecurityPolicy: false,
-  crossOriginResourcePolicy: { policy: 'cross-origin' }
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://www.google.com", "https://js.hcaptcha.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https:", "http:"],
+      connectSrc: ["'self'", "https://openrouter.ai", "https://api.openweathermap.org", "https://newsapi.org", "https://gnews.io"],
+      frameSrc: ["https://www.google.com", "https://js.hcaptcha.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: []
+    }
+  },
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  hsts: {
+    maxAge: 31536000,
+    includeSubDomains: true,
+    preload: true
+  },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
 }));
 
 // Логи
 app.use(morgan('dev'));
+
+// Принудительный HTTPS redirect на Render
+app.use((req, res, next) => {
+  // Проверяем, что мы на production (Render) и запрос пришёл по HTTP
+  const isProduction = process.env.NODE_ENV === 'production' || process.env.RENDER;
+  const proto = req.headers['x-forwarded-proto'] || req.protocol;
+  
+  if (isProduction && proto !== 'https') {
+    return res.redirect(301, `https://${req.get('host')}${req.originalUrl}`);
+  }
+  next();
+});
 
 // CORS
 const origins = (process.env.ALLOWED_ORIGINS || 'http://localhost:3000,http://127.0.0.1:3000')
@@ -89,7 +120,70 @@ const setCache = (res, maxAgeSec, immutable = false) => {
   res.setHeader('Cache-Control', val);
 };
 
+// Precompress middleware: отдача предварительно сжатых .br/.gz файлов
+function precompressMiddleware(rootDir) {
+  // Простое определение MIME-типа по расширению
+  const mimeTypes = {
+    '.js': 'application/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.svg': 'image/svg+xml',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.gif': 'image/gif',
+    '.webp': 'image/webp',
+    '.woff': 'font/woff',
+    '.woff2': 'font/woff2',
+    '.ttf': 'font/ttf',
+    '.eot': 'application/vnd.ms-fontobject'
+  };
+
+  return (req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') return next();
+    
+    const acceptEncoding = (req.headers['accept-encoding'] || '').toLowerCase();
+    if (!acceptEncoding || (!acceptEncoding.includes('br') && !acceptEncoding.includes('gzip'))) {
+      return next();
+    }
+
+    const filePath = path.join(rootDir, req.path);
+    
+    // Проверяем существование исходного файла
+    if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+      return next();
+    }
+
+    const ext = path.extname(filePath);
+    const contentType = mimeTypes[ext] || 'application/octet-stream';
+
+    // Приоритет: br > gzip
+    if (acceptEncoding.includes('br')) {
+      const brPath = filePath + '.br';
+      if (fs.existsSync(brPath)) {
+        res.setHeader('Content-Encoding', 'br');
+        res.setHeader('Vary', 'Accept-Encoding');
+        res.setHeader('Content-Type', contentType);
+        return res.sendFile(brPath);
+      }
+    }
+
+    if (acceptEncoding.includes('gzip')) {
+      const gzPath = filePath + '.gz';
+      if (fs.existsSync(gzPath)) {
+        res.setHeader('Content-Encoding', 'gzip');
+        res.setHeader('Vary', 'Accept-Encoding');
+        res.setHeader('Content-Type', contentType);
+        return res.sendFile(gzPath);
+      }
+    }
+
+    next();
+  };
+}
+
 // /assets — обычно картинки/шрифты: 30 дней + immutable
+app.use('/assets', precompressMiddleware(path.join(ROOT, 'assets')));
 app.use('/assets', express.static(path.join(ROOT, 'assets'), {
   fallthrough: false,
   etag: true,
@@ -98,6 +192,7 @@ app.use('/assets', express.static(path.join(ROOT, 'assets'), {
 }));
 
 // /css — tw.css/style.css: 7 дней (без immutable, т.к. имя файла не содержит хэша)
+app.use('/css', precompressMiddleware(path.join(ROOT, 'css')));
 app.use('/css', express.static(path.join(ROOT, 'css'), {
   fallthrough: false,
   etag: true,
@@ -106,6 +201,7 @@ app.use('/css', express.static(path.join(ROOT, 'css'), {
 }));
 
 // /js — скрипты: 1 день (чтобы изменения быстрее подтягивались)
+app.use('/js', precompressMiddleware(path.join(ROOT, 'js')));
 app.use('/js', express.static(path.join(ROOT, 'js'), {
   fallthrough: false,
   etag: true,

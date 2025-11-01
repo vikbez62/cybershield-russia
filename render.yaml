@@ -13,7 +13,11 @@ services:
         value: "20"
       - key: NPM_CONFIG_PRODUCTION
         value: "false"
+      - key: NODE_ENV
+        value: "production"
       - key: ALLOWED_ORIGINS
+        value: "https://cybershield-russia.onrender.com"
+      - key: PUBLIC_BASE_URL
         value: "https://cybershield-russia.onrender.com"
       - key: NEWS_API_KEY
         sync: false

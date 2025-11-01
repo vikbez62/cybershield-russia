@@ -1,4 +1,4 @@
-// js/app.js — тема, i18n, формат даты
+// js/app.js — тема, i18n, формат даты, безопасность
 var Store = {
   get: function (k, def) {
     try { var v = localStorage.getItem(k); return v ? JSON.parse(v) : (def === undefined ? null : def); }
@@ -6,6 +6,13 @@ var Store = {
   },
   set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
 };
+
+// Безопасность: экранирование HTML для предотвращения XSS
+function escapeHtml(text) {
+  if (typeof text !== 'string') text = String(text);
+  var map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+  return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+}
 
 function setTheme(mode) {
   var root = document.documentElement;
@@ -50,11 +57,45 @@ document.addEventListener('DOMContentLoaded', function () {
   var themeBtn = document.getElementById('themeToggle');
   if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
 
+  // Мобильное меню
+  var mobileMenuToggle = document.getElementById('mobileMenuToggle');
+  var mobileMenu = document.getElementById('mobileMenu');
+  if (mobileMenuToggle && mobileMenu) {
+    mobileMenuToggle.addEventListener('click', function() {
+      var isOpen = mobileMenu.classList.toggle('open');
+      mobileMenuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+      mobileMenuToggle.textContent = isOpen ? '✕' : '☰';
+    });
+    // Закрытие при клике на ссылку
+    var mobileLinks = mobileMenu.querySelectorAll('.nav-link');
+    mobileLinks.forEach(function(link) {
+      link.addEventListener('click', function() {
+        mobileMenu.classList.remove('open');
+        mobileMenuToggle.setAttribute('aria-expanded', 'false');
+        mobileMenuToggle.textContent = '☰';
+      });
+    });
+  }
+
   var langSel = document.getElementById('langSelect');
+  var langFlag = document.getElementById('langFlag');
   var lang = Store.get('lang', 'ru');
+  
+  function updateLangFlag(langCode) {
+    if (!langFlag) return;
+    var flagMap = { ru: '🇷🇺', en: '🇬🇧', zh: '🇨🇳' };
+    langFlag.textContent = flagMap[langCode] || '🇷🇺';
+  }
+  
   if (langSel) {
-    langSel.value = lang; applyI18n(langSel.value);
-    langSel.addEventListener('change', function (e) { applyI18n(e.target.value); });
+    langSel.value = lang;
+    updateLangFlag(lang);
+    applyI18n(lang);
+    langSel.addEventListener('change', function (e) {
+      var selectedLang = e.target.value;
+      updateLangFlag(selectedLang);
+      applyI18n(selectedLang);
+    });
   } else {
     applyI18n(lang);
   }

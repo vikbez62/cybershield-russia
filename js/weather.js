@@ -37,7 +37,7 @@ const Weather = (() => {
   function renderCurrent(data) {
     const wrap = document.getElementById('weather-current');
     if (!wrap) return;
-    if (!data || !data.weather || !data.main) {
+    if (!data || !data.weather || !Array.isArray(data.weather) || data.weather.length === 0 || !data.main) {
       wrap.innerHTML = '<div class="text-sm text-gray-400">Текущая погода недоступна</div>';
       return;
     }
@@ -74,6 +74,7 @@ const Weather = (() => {
     const days = Object.keys(byDay).slice(0,5);
     for (const day of days) {
       const it = byDay[day];
+      if (!it.weather || !Array.isArray(it.weather) || it.weather.length === 0 || !it.main) continue;
       const w = it.weather[0];
       const temp = Math.round(it.main.temp);
       const d = new Date(it.dt * 1000);

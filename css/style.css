@@ -49,6 +49,9 @@ html, body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Оптимизация для мобильных */
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }
 body, .glass, .card, .btn-primary, .btn-secondary, .nav-link, .cs-header, .cs-footer, .chat-border {
   transition: background-color .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease;
@@ -115,7 +118,7 @@ body, .glass, .card, .btn-primary, .btn-secondary, .nav-link, .cs-header, .cs-fo
 .section-title  { font-family: 'Montserrat', sans-serif; font-weight: 800; }
 
 /* Hero */
-.hero-title { font-weight: 900; letter-spacing: -0.02em; }
+.hero-title { font-weight: 800; letter-spacing: -0.01em; line-height: 1.2; }
 .text-gradient {
   background: linear-gradient(90deg, var(--cs-grad-start), var(--cs-grad-mid), var(--cs-grad-end));
   -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent;
@@ -202,6 +205,95 @@ margin-block-start: 0;
 margin-block-end: .5em;
 font-weight: inherit; /* размеры и жирность задаём классами */
 font-size: inherit;
+}
+
+/* Селектор языков с флагом */
+.lang-selector {
+  min-width: 80px;
+  position: relative;
+}
+.lang-selector select {
+  padding-right: 32px;
+  background-image: none;
+}
+#langFlag {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  font-size: 16px;
+  line-height: 1;
+}
+
+/* Мобильная оптимизация */
+@media (max-width: 767px) {
+  .cs-header .max-w-7xl {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  .cs-header .flex.items-center.gap-2 {
+    gap: 8px;
+  }
+  .lang-selector {
+    min-width: 70px;
+  }
+  .lang-selector select {
+    padding: 8px 28px 8px 8px;
+    font-size: 13px;
+  }
+  #langFlag {
+    font-size: 14px;
+    right: 6px;
+  }
+  
+  /* Мобильное меню */
+  #mobileMenu {
+    display: none;
+    margin-top: 12px;
+    padding-top: 16px;
+    border-top: 1px solid var(--cs-border);
+    flex-direction: column;
+    gap: 12px;
+  }
+  #mobileMenu.open {
+    display: flex;
+  }
+  #mobileMenu .nav-link {
+    padding: 8px 12px;
+    border-radius: 8px;
+  }
+  #mobileMenu .nav-link:hover {
+    background: var(--cs-glass-bg);
+  }
+  
+  /* Оптимизация для маленьких экранов */
+  .hero-title {
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+  .card-body {
+    padding: 10px;
+  }
+  .btn-primary, .btn-secondary {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+}
+
+/* Поддержка современных браузеров */
+@supports (backdrop-filter: blur(10px)) {
+  .glass {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+}
+
+@supports (aspect-ratio: 1) {
+  .card-img {
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

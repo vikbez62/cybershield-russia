@@ -4,6 +4,7 @@ const axios = require('axios');
 const router = express.Router();
 
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY || '';
+const PUBLIC_BASE_URL = process.env.PUBLIC_BASE_URL || '';
 
 router.post('/chat', async (req, res) => {
   try {
@@ -17,7 +18,12 @@ router.post('/chat', async (req, res) => {
 
     const systemRu = 'Ты законопослушный помощник по кибербезопасности. Помогай гражданам РФ защищаться от мошенников, фишинга и спама. Не давай инструкции по взлому или незаконным действиям.';
     const systemEn = 'You are a lawful cybersecurity assistant. Help users avoid scams and phishing. Never provide hacking instructions or unlawful guidance.';
-    const system = locale.startsWith('ru') ? systemRu : systemEn;
+    const system = String(locale).toLowerCase().startsWith('ru') ? systemRu : systemEn;
+
+    const referer =
+      PUBLIC_BASE_URL ||
+      req.headers.origin ||
+      `${req.protocol}://${req.get('host')}`;
 
     const { data } = await axios.post('https://openrouter.ai/api/v1/chat/completions', {
       model: 'openrouter/auto',
@@ -31,7 +37,7 @@ router.post('/chat', async (req, res) => {
       headers: {
         'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
         'Content-Type': 'application/json',
-        'HTTP-Referer': 'http://localhost:3000',
+        'HTTP-Referer': referer,
         'X-Title': 'CyberShield Russia'
       },
       timeout: 20000
