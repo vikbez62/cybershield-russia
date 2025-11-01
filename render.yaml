@@ -1,37 +1,38 @@
+$yaml = @'
 services:
->>
->>     type: web
->>     name: cybershield-russia
->>     env: node
->>     region: frankfurt
->>     plan: free
->>     rootDir: .
->>     buildCommand: npm install && npm --prefix api install && npm run build:css
->>     startCommand: node api/server.js
->>     autoDeploy: true
->>     envVars:
->>         key: NODE_VERSION
->>         value: "20"
->>         key: NPM_CONFIG_PRODUCTION
->>         value: "false"
->>         key: ALLOWED_ORIGINS
->>         value: "https://cybershield-russia.onrender.com"
->>         key: NEWS_API_KEY
->>         sync: false
->>         key: GNEWS_API_KEY
->>         sync: false
->>         key: OPENWEATHER_API_KEY
->>         sync: false
->>         key: OPENROUTER_API_KEY
->>         sync: false
->>         key: ADMIN_REPORTS_KEY
->>         sync: false
->>         key: CAPTCHA_PROVIDER
->>         sync: false
->>         key: CAPTCHA_SITE_KEY
->>         sync: false
->>         key: CAPTCHA_SECRET
->>         sync: false
->>         healthCheckPath: /health
->>         '@
->>         Set-Content -Path render.yaml -Encoding UTF8 -Value $yaml
+
+    type: web
+    name: cybershield-russia
+    env: node
+    region: frankfurt
+    plan: free
+    rootDir: .
+    buildCommand: npm install && npm --prefix api install && npm run build:css
+    startCommand: node api/server.js
+    autoDeploy: true
+    envVars:
+        key: NODE_VERSION
+        value: "20"
+        key: NPM_CONFIG_PRODUCTION
+        value: "false"
+        key: ALLOWED_ORIGINS
+        value: "https://cybershield-russia.onrender.com"
+        key: NEWS_API_KEY
+        sync: false
+        key: GNEWS_API_KEY
+        sync: false
+        key: OPENWEATHER_API_KEY
+        sync: false
+        key: OPENROUTER_API_KEY
+        sync: false
+        key: ADMIN_REPORTS_KEY
+        sync: false
+        key: CAPTCHA_PROVIDER
+        sync: false
+        key: CAPTCHA_SITE_KEY
+        sync: false
+        key: CAPTCHA_SECRET
+        sync: false
+        healthCheckPath: /health
+        '@
+        Set-Content -Path render.yaml -Encoding UTF8 -Value $yaml
