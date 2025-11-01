@@ -1,5 +1,4 @@
-    @"
-    services:
+services:
 
     type: web
     name: cybershield-russia
@@ -34,4 +33,3 @@
         key: CAPTCHA_SECRET
         sync: false
         healthCheckPath: /health
-        "@ | Set-Content -Encoding UTF8 render.yaml
