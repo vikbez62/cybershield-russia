@@ -15,12 +15,24 @@ const News = (() => {
 
   async function fetchJson(url) {
     try {
-      const res = await fetch(url, { headers: { 'Cache-Control': 'no-cache' } });
-      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const res = await fetch(url, { 
+        headers: { 'Cache-Control': 'no-cache' },
+        signal: AbortSignal.timeout(15000) // таймаут 15 секунд
+      });
+      if (!res.ok) {
+        console.warn('fetch failed:', url, 'HTTP', res.status);
+        return [];
+      }
       const data = await res.json();
-      return Array.isArray(data) ? data : [];
+      if (!Array.isArray(data)) {
+        console.warn('fetch returned non-array:', url, typeof data);
+        return [];
+      }
+      return data.length > 0 ? data : [];
     } catch (e) {
-      console.warn('fetch failed:', url, e.message);
+      if (e.name !== 'AbortError') {
+        console.warn('fetch error:', url, e.message);
+      }
       return [];
     }
   }
@@ -134,22 +146,51 @@ const News = (() => {
   async function load(key, urls, containerId, force = false) {
     try {
       const cached = getCache(key);
-      if (cached && !force) {
+      if (cached && !force && cached.length > 0) {
         render(cached, containerId);
-      } else {
+        loaded.add(key);
+        // Фоновое обновление если кэш есть
+        setTimeout(async () => {
+          try {
+            const urlsWithForce = urls.map(u => applyForce(u, u.startsWith('/api/rss')));
+            const fresh = await fetchWithFallback(urlsWithForce);
+            if (fresh.length > 0) {
+              setCache(key, fresh);
+              render(fresh, containerId);
+            }
+          } catch (e) {
+            console.warn('Background refresh failed:', key, e.message);
+          }
+        }, 500);
+        return;
+      }
+      
+      // Показываем скелетон при первой загрузке или принудительном обновлении
+      if (!cached || force) {
         renderSkeleton(containerId, 6);
       }
+      
       const urlsWithForce = urls.map(u => applyForce(u, force && u.startsWith('/api/rss')));
       const fresh = await fetchWithFallback(urlsWithForce);
+      
       if (fresh.length > 0) {
         setCache(key, fresh);
         render(fresh, containerId);
-      } else if (!cached) {
+      } else if (!cached || cached.length === 0) {
+        render([], containerId);
+      }
+      
+      loaded.add(key);
+    } catch (e) {
+      console.error('load error:', key, e);
+      // Показываем кэш даже при ошибке, если есть
+      const cached = getCache(key);
+      if (cached && cached.length > 0) {
+        render(cached, containerId);
+      } else {
         render([], containerId);
       }
       loaded.add(key);
-    } catch (e) {
-      console.error('load error:', e);
     }
   }
 
@@ -159,9 +200,10 @@ const News = (() => {
   }
 
   function init() {
-    // Первичная загрузка
+    // Первичная загрузка - все секции сразу
     load('global', ['/api/rss/global', '/api/news/global'], 'news-global');
-    ['ru'].forEach(c => load(c, [`/api/rss/country/${c}`, `/api/news/country/${c}`], `news-${c}`));
+    // Загружаем все страны: ru, by, kp, cn
+    ['ru', 'by', 'kp', 'cn'].forEach(c => load(c, [`/api/rss/country/${c}`, `/api/news/country/${c}`], `news-${c}`));
 
     // Обновить глобальные
     const refreshBtn = document.getElementById('refreshGlobal');
