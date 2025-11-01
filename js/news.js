@@ -15,10 +15,16 @@ const News = (() => {
 
   async function fetchJson(url) {
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 15000); // таймаут 15 секунд
+      
       const res = await fetch(url, { 
         headers: { 'Cache-Control': 'no-cache' },
-        signal: AbortSignal.timeout(15000) // таймаут 15 секунд
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
+      
       if (!res.ok) {
         console.warn('fetch failed:', url, 'HTTP', res.status);
         return [];
