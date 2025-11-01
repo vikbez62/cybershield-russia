@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="ru" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CyberShield Russia — КиберЩит</title>
+  <meta name="description" content="Портал кибербезопасности: новости, погода, советы защиты от мошенников, AI‑ассистент и репорты о мошенничестве.">
+  <link rel="canonical" href="http://localhost:3000/">
+  <meta name="theme-color" content="#0F172A">
+  <meta name="color-scheme" content="dark light">
+
+  <meta property="og:title" content="CyberShield Russia — КиберЩит">
+  <meta property="og:description" content="Новости кибербезопасности, советы, AI‑ассистент и репорты о мошенниках.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="http://localhost:3000/">
+  <meta property="og:image" content="/assets/images/og-image.png">
+
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+  <link rel="alternate icon" href="/favicon.ico" sizes="any">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&family=Montserrat:wght@700..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="/css/tw.css">
+  <link rel="stylesheet" href="/css/style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "CyberShield Russia",
+    "alternateName": "КиберЩит",
+    "url": "http://localhost:3000/",
+    "inLanguage": "ru-RU",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "http://localhost:3000/?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+
+<body class="font-sans selection:bg-accent/30">
+  <!-- Header -->
+  <header class="sticky top-0 z-40 backdrop-blur border-b cs-header">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <a href="/" class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center text-accent font-bold">CS</div>
+        <div>
+          <div class="text-lg md:text-xl font-display tracking-wide">CyberShield Russia</div>
+          <div class="text-xs text-muted">КиберЩит — портал кибербезопасности</div>
+        </div>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-sm">
+        <a class="nav-link" href="#news-section" data-i18n="nav_news">Новости</a>
+        <a class="nav-link" href="#learn-section" data-i18n="nav_learn">Обучение</a>
+        <a class="nav-link" href="#tools-section" data-i18n="nav_tools">Инструменты</a>
+        <a class="nav-link" href="#about-section" data-i18n="nav_about">О нас</a>
+      </nav>
+      <div class="flex items-center gap-3">
+        <select id="langSelect" class="glass px-3 py-2 text-sm rounded-lg" title="Язык">
+          <option value="ru">RU</option>
+          <option value="en">EN</option>
+          <option value="zh">中文</option>
+        </select>
+        <button id="themeToggle" class="glass px-3 py-2 rounded-lg text-sm" title="Тема" aria-label="Переключить тему">🌓</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="relative overflow-hidden">
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-accent/10 blur-3xl pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-4 py-12 md:py-16">
+      <div class="grid md:grid-cols-2 gap-8 items-center">
+        <div>
+          <h1 class="hero-title text-gradient text-3xl md:text-5xl font-display leading-tight">
+            Защита от кибермошенников, фишинга и угроз. В реальном времени.
+          </h1>
+          <p class="mt-4 text-secondary" data-i18n="hero_sub">
+            Следите за новостями кибербезопасности, получайте советы и общайтесь с AI‑ассистентом.
+          </p>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <a href="#news-section" class="btn-primary">К новостям</a>
+            <a href="#ai-section" class="btn-secondary">Открыть AI‑чат</a>
+            <button class="btn-secondary" data-modal-open="#reportModal">Сообщить о мошенничестве</button>
+          </div>
+          <div class="mt-4 text-xs text-muted">Обновление новостей каждые 30 минут</div>
+        </div>
+
+        <!-- Weather widget -->
+        <div class="glass rounded-2xl p-6 shadow-glass">
+          <h3 class="font-display mb-3">Погода рядом с вами</h3>
+          <div id="weather-widget">
+            <div id="weather-current" class="mb-4">Загрузка текущей погоды...</div>
+            <div id="weather-forecast" class="grid grid-cols-2 md:grid-cols-5 gap-2"></div>
+          </div>
+          <div class="text-xs text-muted mt-3">Источник: OpenWeatherMap</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main -->
+  <main id="news-section" class="max-w-7xl mx-auto px-4 pb-16">
+    <div class="flex items-center justify-between mb-4">
+      <h2 class="text-2xl font-display">Новости кибербезопасности</h2>
+      <div class="text-sm text-muted">Источники: RSS, NewsAPI, GNews</div>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-6">
+      <section class="md:col-span-2">
+        <!-- Global -->
+        <div class="section-header">
+          <h3 class="section-title">Мировые</h3>
+          <button class="btn-mini" id="refreshGlobal" aria-label="Обновить мировые">Обновить</button>
+        </div>
+        <div id="news-global" class="news-grid"></div>
+
+        <!-- RU -->
+        <div class="mt-8 section-header">
+          <h3 class="section-title">Россия</h3>
+          <button class="btn-mini" data-country="ru" aria-label="Обновить Россию">Обновить</button>
+        </div>
+        <div id="news-ru" class="news-grid"></div>
+
+        <!-- CN -->
+        <div class="mt-8 section-header">
+          <h3 class="section-title">Китай</h3>
+          <button class="btn-mini" data-country="cn" aria-label="Обновить Китай">Обновить</button>
+        </div>
+        <div id="news-cn" class="news-grid"></div>
+
+        <!-- BY -->
+        <div class="mt-8 section-header">
+          <h3 class="section-title">Беларусь</h3>
+          <button class="btn-mini" data-country="by" aria-label="Обновить Беларусь">Обновить</button>
+        </div>
+        <div id="news-by" class="news-grid"></div>
+
+        <!-- KP -->
+        <div class="mt-8 section-header">
+          <h3 class="section-title">КНДР</h3>
+          <button class="btn-mini" data-country="kp" aria-label="Обновить КНДР">Обновить</button>
+        </div>
+        <div id="news-kp" class="news-grid"></div>
+      </section>
+
+      <!-- Aside -->
+      <aside class="md:col-span-1">
+        <div class="glass rounded-2xl p-5">
+          <h3 class="font-display mb-3">Алёрты о мошенничестве</h3>
+          <ul class="list-disc list-inside text-sm text-secondary" id="alerts">
+            <li>Осторожно: звонки от «банковской безопасности» — это мошенники.</li>
+            <li>Не переходите по ссылкам из SMS от неизвестных отправителей.</li>
+          </ul>
+          <button class="btn-mini mt-3" data-modal-open="#reportModal">Сообщить о мошенничестве</button>
+        </div>
+
+        <!-- AI -->
+        <div class="glass rounded-2xl p-5 mt-6" id="ai-section">
+          <h3 class="font-display mb-3">AI‑ассистент</h3>
+          <div id="ai-chat" class="h-64 overflow-y-auto rounded-lg p-3 space-y-3 border chat-border">
+            <div class="msg msg-bot">
+              Привет! Я помогу проверить подозрительные звонки и ссылки. Чем помочь?
+            </div>
+          </div>
+          <div class="flex gap-2 mt-3">
+            <input id="ai-input" class="flex-1 glass px-3 py-2 rounded-lg" placeholder="Опишите проблему...">
+            <button id="ai-send" class="btn-primary">Отправить</button>
+          </div>
+          <p class="text-xs text-muted mt-2">AI уважает законы: без инструкций по взлому.</p>
+        </div>
+      </aside>
+    </div>
+
+    <!-- CTA -->
+    <section id="report-section" class="mt-16">
+      <h2 class="text-2xl font-display mb-3">Сообщить о мошенничестве</h2>
+      <p class="text-secondary mb-4">Опишите инцидент — мы аккуратно сохраним сообщение.</p>
+      <button class="btn-primary" data-modal-open="#reportModal">Открыть форму</button>
+      <div class="text-xs text-muted mt-2">Сообщения обрабатываются без публикации личных данных.</div>
+    </section>
+
+    <!-- Обучение -->
+    <section id="learn-section" class="mt-16">
+      <h2 class="text-2xl font-display mb-3">Обучение</h2>
+      <p class="text-secondary mb-4">Скоро: статьи, видео и тесты по кибербезопасности.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <article class="glass rounded-2xl p-4">
+          <h3 class="font-display text-lg">Статьи</h3>
+          <p class="text-secondary mt-1">База знаний: фишинг, социнжиниринг, защита аккаунтов, приватность.</p>
+          <ul class="list-disc list-inside text-secondary mt-2 text-sm">
+            <li>Как распознать звонок «службы безопасности»</li>
+            <li>Безопасные настройки в мессенджерах</li>
+            <li>Как проверить ссылку перед кликом</li>
+          </ul>
+        </article>
+
+        <article class="glass rounded-2xl p-4">
+          <h3 class="font-display text-lg">Видео</h3>
+          <p class="text-secondary mt-1">Короткие ролики и разборы схем. Доступно на русском.</p>
+          <p class="text-xs text-muted mt-2">Скоро</p>
+        </article>
+
+        <article class="glass rounded-2xl p-4">
+          <h3 class="font-display text-lg">Тесты</h3>
+          <p class="text-secondary mt-1">Самопроверка: фишинг‑квиз, сила пароля, гигиена аккаунтов.</p>
+          <p class="text-xs text-muted mt-2">Скоро</p>
+        </article>
+      </div>
+    </section>
+
+    <!-- Инструменты -->
+    <section id="tools-section" class="mt-16">
+      <h2 class="text-2xl font-display mb-3">Инструменты</h2>
+      <p class="text-secondary mb-4">Проверка пароля, база мошеннических номеров — в планах.</p>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Проверка пароля -->
+        <article class="glass rounded-2xl p-4" id="pw-tool">
+          <h3 class="font-display text-lg">Проверка пароля (локально)</h3>
+          <div class="mt-3 space-y-3">
+            <div class="flex items-center gap-2">
+              <input id="pw-input" type="password" class="glass px-3 py-2 rounded-lg w-full" placeholder="Введите пароль (данные не отправляются)">
+              <button id="pw-toggle" class="btn-mini" type="button">Показать</button>
+            </div>
+
+            <div id="pw-caps" class="text-xs text-warn hide">Внимание: CapsLock включен</div>
+
+            <div class="pw-meter" aria-hidden="true">
+              <div id="pw-meter-fill" class="pw-meter-fill"></div>
+            </div>
+            <div class="text-sm">
+              Сила: <span id="pw-score-label" class="font-semibold">—</span>
+              <span class="text-muted">
+                · энтропия: <span id="pw-entropy">0</span> бит · взлом:
+                офлайн <span id="pw-time-off">—</span>, онлайн <span id="pw-time-on">—</span>
+              </span>
+            </div>
+            <ul id="pw-tips" class="list-disc list-inside text-secondary text-sm"></ul>
+
+            <div class="mt-4 grid md:grid-cols-3 gap-3">
+              <div>
+                <label class="block text-sm text-secondary mb-1">Длина</label>
+                <input id="pw-len" type="number" min="8" max="64" value="16" class="glass px-3 py-2 rounded-lg w-full">
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm text-secondary mb-1">Набор символов</label>
+                <div class="flex flex-wrap gap-3 text-sm text-secondary">
+                  <label><input type="checkbox" id="set-l" checked> строчные</label>
+                  <label><input type="checkbox" id="set-u" checked> ПРОПИСНЫЕ</label>
+                  <label><input type="checkbox" id="set-d" checked> цифры</label>
+                  <label><input type="checkbox" id="set-s" checked> символы</label>
+                  <label><input type="checkbox" id="set-no-amb" checked> без похожих (l/I/1/O/0)</label>
+                </div>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button id="pw-gen" class="btn-secondary" type="button">Сгенерировать</button>
+              <button id="pw-copy" class="btn-secondary" type="button">Скопировать</button>
+              <div id="pw-hint" class="text-sm text-muted"></div>
+            </div>
+          </div>
+        </article>
+
+        <!-- База номеров -->
+        <article class="glass rounded-2xl p-4">
+          <h3 class="font-display text-lg">База мошеннических номеров</h3>
+          <p class="text-secondary mt-1">Проверка по опубликованным кейсам и жалобам.</p>
+          <button class="btn-secondary mt-3" data-modal-open="#reportModal">Сообщить номер</button>
+          <p class="text-xs text-muted mt-2">Скоро поиск по базе</p>
+        </article>
+
+        <!-- Проверка ссылок -->
+        <article class="glass rounded-2xl p-4" id="url-tool">
+          <h3 class="font-display text-lg">Проверка ссылок (локально)</h3>
+          <div class="mt-3 space-y-3">
+            <div class="flex items-center gap-2">
+              <input id="url-input" class="glass px-3 py-2 rounded-lg w-full" placeholder="Вставьте ссылку (https://... или домен)">
+              <button id="url-check" class="btn-secondary" type="button">Проверить</button>
+            </div>
+            <div id="url-result" class="text-sm text-secondary"></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- О нас -->
+    <section id="about-section" class="mt-16">
+      <h2 class="text-2xl font-display mb-3">О проекте</h2>
+      <p class="text-secondary">
+        CyberShield Russia (КиберЩит) — информационный портал для граждан. Мы не публикуем нелегальный контент и не поддерживаем Dark Web.
+      </p>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t py-8 cs-footer">
+    <div class="max-w-7xl mx-auto px-4 text-sm text-muted flex flex-col md:flex-row justify-between gap-3">
+      <div>© 2025 CyberShield Russia</div>
+      <div class="space-x-4">
+        <a href="/robots.txt">robots.txt</a>
+        <a href="/sitemap.xml">sitemap.xml</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Report Modal -->
+  <div id="reportModal" class="cs-modal hidden" aria-hidden="true">
+    <div class="cs-modal-backdrop" data-modal-close></div>
+    <div class="cs-modal-panel glass" role="dialog" aria-modal="true" aria-labelledby="reportModalTitle" tabindex="-1">
+      <div class="cs-modal-header">
+        <h3 id="reportModalTitle" class="text-xl font-display">Сообщить о мошенничестве</h3>
+        <button class="cs-modal-close" title="Закрыть" aria-label="Закрыть" data-modal-close>✕</button>
+      </div>
+
+      <form id="reportForm" class="space-y-3" method="post" action="/api/reports" novalidate data-report-form="1">
+        <div class="hp-container" aria-hidden="true">
+          <label>Оставьте это поле пустым</label>
+          <input type="text" name="hp_field" class="hp-input" tabindex="-1" autocomplete="off">
+        </div>
+        <input type="hidden" name="hp_time" value="">
+        <input type="hidden" name="recaptchaToken" value="">
+
+        <div>
+          <label class="block text-sm text-secondary mb-1">Тип</label>
+          <select name="type" class="glass px-3 py-2 rounded-lg w-full" required>
+            <option value="call">Телефонный звонок</option>
+            <option value="sms">СМС/мессенджер</option>
+            <option value="site">Сайт/ссылка</option>
+            <option value="social">Соцсети</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm text-secondary mb-1">Номер/ссылка/аккаунт</label>
+          <input type="text" name="target" class="glass px-3 py-2 rounded-lg w-full" placeholder="+7..., https://..." required>
+        </div>
+        <div>
+          <label class="block text-sm text-secondary mb-1">Описание</label>
+          <textarea name="description" rows="5" class="glass px-3 py-2 rounded-lg w-full" placeholder="Что произошло? Что требовали? Представлялись кем?" required></textarea>
+        </div>
+        <div>
+          <label class="block text-sm text-secondary mb-1">Контакт для связи (необязательно)</label>
+          <input type="text" name="contact" class="glass px-3 py-2 rounded-lg w-full" placeholder="email или телефон (по желанию)">
+        </div>
+        <div class="text-xs text-muted">
+          Отправляя сообщение, вы соглашаетесь на обработку данных в рамках цели — противодействие мошенничеству.
+        </div>
+        <div class="flex gap-3 items-center">
+          <button type="submit" class="btn-primary">Отправить отчёт</button>
+          <div id="reportHint" class="text-sm text-secondary"></div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/js/app.js" defer></script>
+  <script src="/js/news.js" defer></script>
+  <script src="/js/weather.js" defer></script>
+  <script src="/js/ai-agent.js" defer></script>
+  <script src="/js/report.js" defer></script>
+  <script src="/js/tools.js" defer></script>
+  <script src="/js/url-check.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+"ru": [
+{ "name": "SecurityLab", "url": "https://www.securitylab.ru/news/rss/" },
+{ "name": "Хакер", "url": "https://xakep.ru/feed/" },
+{ "name": "Securelist (RU)", "url": "https://securelist.ru/feed/" }
+],
+"en": [
+{ "name": "The Hacker News", "url": "https://feeds.feedburner.com/TheHackersNews" },
+{ "name": "BleepingComputer", "url": "https://www.bleepingcomputer.com/feed/" },
+{ "name": "Krebs on Security", "url": "https://krebsonsecurity.com/feed/" },
+{ "name": "SANS ISC", "url": "https://isc.sans.edu/rssfeed.xml" },
+{ "name": "CISA Alerts", "url": "https://www.cisa.gov/cybersecurity-advisories/all.xml" }
+]
+}

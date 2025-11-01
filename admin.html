@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru" class="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CyberShield · Admin Reports</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg">
+  <link rel="stylesheet" href="/css/tw.css">
+  <link rel="stylesheet" href="/css/style.css">
+  <style>
+    .table-wrap { overflow:auto; border:1px solid var(--cs-border); border-radius: 12px; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { padding:10px 12px; border-bottom:1px solid var(--cs-border); vertical-align: top; }
+    th { position: sticky; top: 0; background: var(--cs-surface); z-index: 1; font-weight: 700; }
+    tr:hover { background: rgba(255,255,255,0.04); }
+    .nowrap { white-space: nowrap; }
+    .mono { font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace; }
+    .row-hidden { opacity: .6; }
+    .btn-danger { color: var(--cs-danger); border:1px solid var(--cs-danger); background: transparent; border-radius: 8px; padding: 6px 10px; }
+    .btn-plain { background: var(--cs-glass-bg); border: 1px solid var(--cs-border); border-radius: 8px; padding: 6px 10px; }
+    .actions { display:flex; gap:6px; flex-wrap: wrap; }
+  </style>
+</head>
+<body class="font-sans selection:bg-accent/30">
+  <header class="sticky top-0 z-40 backdrop-blur border-b cs-header">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-9 h-9 rounded-xl bg-accent/20 border border-accent/40 flex items-center justify-center text-accent font-bold">CS</div>
+        <div>
+          <div class="text-lg font-display">Admin · Reports</div>
+          <div class="text-xs text-muted">Только для администратора</div>
+        </div>
+      </div>
+      <a class="btn-secondary" href="/">На сайт</a>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 space-y-4">
+    <div class="glass rounded-2xl p-4">
+      <div class="grid md:grid-cols-6 gap-3 items-end">
+        <div>
+          <label class="block text-sm text-secondary mb-1">Admin key</label>
+          <input id="admKey" type="password" class="glass px-3 py-2 rounded-lg w-full" placeholder="введите ключ">
+        </div>
+        <div>
+          <label class="block text-sm text-secondary mb-1">Тип</label>
+          <select id="fltType" class="glass px-3 py-2 rounded-lg w-full">
+            <option value="">Все</option>
+            <option value="call">Телефон</option>
+            <option value="sms">СМС/мессенджер</option>
+            <option value="site">Сайт/ссылка</option>
+            <option value="social">Соцсети</option>
+            <option value="other">Другое</option>
+          </select>
+        </div>
+        <div class="md:col-span-2">
+          <label class="block text-sm text-secondary mb-1">Поиск (номер/описание)</label>
+          <input id="fltQuery" class="glass px-3 py-2 rounded-lg w-full" placeholder="поиск...">
+        </div>
+        <div class="flex gap-2 items-center">
+          <input id="fltHidden" type="checkbox" class="mr-2"><label for="fltHidden" class="text-sm text-secondary">Показывать скрытые</label>
+        </div>
+        <div class="flex gap-2">
+          <button id="btnLoad" class="btn-primary flex-1">Загрузить</button>
+          <button id="btnExport" class="btn-secondary">Экспорт CSV</button>
+        </div>
+      </div>
+      <div id="hint" class="text-sm text-muted mt-2"></div>
+    </div>
+
+    <div class="table-wrap glass p-0">
+      <table>
+        <thead>
+          <tr>
+            <th class="nowrap">Дата/время</th>
+            <th class="nowrap">Тип</th>
+            <th class="nowrap">Цель</th>
+            <th>Описание</th>
+            <th class="nowrap">IP</th>
+            <th class="nowrap">ID</th>
+            <th class="nowrap">Действия</th>
+          </tr>
+        </thead>
+        <tbody id="tblBody">
+          <tr><td colspan="7" class="text-secondary p-4">Нажмите «Загрузить»</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="/js/admin.js" defer></script>
+</body>
+</html>
